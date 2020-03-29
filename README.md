@@ -12,3 +12,12 @@ and to retrieve data, simply
 ```csharp
 string value = LocalStorage.instance["key"];
 ```
+
+`byte[]` Values can also be stored and retrieved.
+```csharp
+byte[] someByteArray;
+//...
+LocalStorage.base64["key"] = someByteArray;
+//...
+byte[] retrieved = LocalStorage.base64[key];
+```

@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Text;
 
 /// <summary> Helper class to access LocalStorage on WebGL, and as files outside of WebGL </summary>
 public sealed class LocalStorage {
@@ -12,7 +13,9 @@ public sealed class LocalStorage {
 	private static extern void SetData(string key, string data);
 #endif
 	/// <summary> Instance to access localStorage. </summary>
-	public static LocalStorage instance = new LocalStorage();
+	public static readonly LocalStorage instance = new LocalStorage();
+	/// <summary> Instance to access localStorage for byte[] data using base64 encoding. </summary>
+	public static readonly WithBase64 base64 = new WithBase64(); 
 	/// <summary> Private constructor to disallow creation elsewhere. </summary>
 	private LocalStorage() { }
 
@@ -50,5 +53,29 @@ public sealed class LocalStorage {
 			}
 		}
 #endif
+	}
+	
+	/// <summary> Class to wrap LocalStorage with Base64 conversion for byte[] data. </summary>
+	public class WithBase64 {
+		/// <summary> Internal constructor for use by same assembly (Plugins) only. </summary>
+		internal WithBase64() { }
+		/// <summary> Accesses 'localStorage', passing data through Base64 conversion. </summary>
+		/// <param name="key"> Key to access in localStorage. </param>
+		/// <returns> Value of key in localStorage, as a Base64 encoded byte[] </returns>
+		public byte[] this[string key] {
+			get { 
+				string value = instance[key];
+				if (value == null) { return null; }
+
+				try {
+					return Convert.FromBase64String(value); 
+				} catch (Exception e) {
+					Debug.LogWarning($"Could not parse contents of file {key}, was not Base64 encoded.");
+					Debug.LogWarning(e);
+					return null;
+				}
+			}
+			set { instance[key] = Convert.ToBase64String(value); }
+		}
 	}
 }
