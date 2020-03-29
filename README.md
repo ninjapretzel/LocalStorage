@@ -19,5 +19,5 @@ byte[] someByteArray;
 //...
 LocalStorage.base64["key"] = someByteArray;
 //...
-byte[] retrieved = LocalStorage.base64[key];
+byte[] retrieved = LocalStorage.base64["key"];
 ```
