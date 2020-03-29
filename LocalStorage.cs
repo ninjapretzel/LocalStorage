@@ -31,12 +31,14 @@ public sealed class LocalStorage {
 			try {
 				if (File.Exists(path)) {
 					return File.ReadAllText(path);
+				} else {
+					return null;
 				}
 			} catch (Exception e) {
 				Debug.LogWarning($"Error loading file {key} from {path}");
 				Debug.LogWarning(e);
 			}
-			return "";
+			return null;
 		}
 		set {
 			string path = Application.persistentDataPath + "/" + key;

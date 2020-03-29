@@ -24,11 +24,15 @@ mergeInto(LibraryManager.library, {
 
 		try {
 			key = Pointer_stringify(key);
-			return toManagedString(localStorage[key]);
+			var val = localStorage[key];
+			if (val === null || val === undefined) {
+				return null;
+			}
+			return toManagedString(val);
 		} catch (err) {
 			console.log("Error Loading data:");
 			console.log(err);
-			return toManagedString("");
+			return null;
 		}
 	},
 	SetData: function(key, data){
